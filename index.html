@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Викторина: Орбита знаний</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        
+        body{
+            font-family:'Roboto',sans-serif;
+            background: radial-gradient(ellipse at top, #0a0f2a, #030614);
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:20px;
+            position:relative;
+        }
+        
+        body::before{
+            content:'';
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background-image: 
+                radial-gradient(2px 2px at 10px 20px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 50px 80px, #ffd700, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 200px 150px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 350px 300px, #aaa, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 500px 50px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 650px 400px, #ffd700, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 800px 250px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 100px 500px, #ccc, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 900px 600px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 250px 700px, #ffd700, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 700px 800px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 450px 550px, #eee, rgba(0,0,0,0)),
+                radial-gradient(3px 3px at 1100px 350px, #fff, rgba(0,0,0,0)),
+                radial-gradient(1px 1px at 1300px 500px, #ffd700, rgba(0,0,0,0));
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity:0.8;
+            z-index:0;
+            pointer-events:none;
+        }
+        
+        body::after{
+            content:'';
+            position:fixed;
+            bottom:0;
+            left:0;
+            width:100%;
+            height:60%;
+            background: radial-gradient(ellipse at bottom, rgba(100,50,150,0.3), transparent);
+            z-index:0;
+            pointer-events:none;
+        }
+        
+        .container{
+            position:relative;
+            z-index:1;
+            width:95%;
+            max-width:950px;
+            background:rgba(5,10,30,0.85);
+            backdrop-filter:blur(12px);
+            border-radius:30px;
+            padding:30px;
+            box-shadow:0 25px 50px rgba(0,0,0,0.6),0 0 0 1px rgba(255,215,0,0.2);
+            border:1px solid rgba(255,255,255,0.1);
+            animation:fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn{
+            from{opacity:0;transform:translateY(20px);}
+            to{opacity:1;transform:translateY(0);}
+        }
+        
+        h1{
+            font-family:'Orbitron',monospace;
+            font-size:2em;
+            text-align:center;
+            margin-bottom:8px;
+            color:#FFD966;
+            letter-spacing:2px;
+        }
+        
+        .subtitle{
+            text-align:center;
+            color:#aaa;
+            margin-bottom:25px;
+            font-size:0.85em;
+        }
+        
+        h2{
+            font-family:'Orbitron',monospace;
+            text-align:center;
+            margin-bottom:20px;
+            color:#FFD966;
+            font-size:1.3em;
+        }
+        
+        .goal-block{
+            background:rgba(0,0,0,0.5);
+            border-radius:20px;
+            padding:25px;
+            margin:20px 0;
+            border:1px solid rgba(255,215,0,0.2);
+            text-align:center;
+        }
+        
+        .goal-text{
+            line-height:1.6;
+            color:#ddd;
+        }
+        
+        .play-btn{
+            background:linear-gradient(90deg,#ff9800,#f57c00);
+            border:none;
+            color:white;
+            padding:14px 45px;
+            font-size:1.2em;
+            font-weight:bold;
+            border-radius:50px;
+            cursor:pointer;
+            margin:15px auto;
+            display:block;
+            font-family:'Orbitron',monospace;
+        }
+        
+        .play-btn:hover{
+            transform:scale(1.02);
+            box-shadow:0 0 15px rgba(255,152,0,0.5);
+        }
+        
+        .categories{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+            gap:18px;
+            margin-top:15px;
+        }
+        
+        .cat-btn{
+            background:linear-gradient(135deg,rgba(30,42,94,0.9),rgba(22,32,72,0.9));
+            border:1px solid rgba(255,215,0,0.3);
+            border-radius:20px;
+            padding:25px 10px;
+            text-align:center;
+            cursor:pointer;
+            transition:all 0.2s;
+            font-weight:bold;
+            color:white;
+        }
+        
+        .cat-btn i{
+            font-size:2.2em;
+            display:block;
+            margin-bottom:10px;
+            color:#FFD966;
+        }
+        
+        .cat-btn:hover{
+            transform:translateY(-5px);
+            border-color:#FFD966;
+            background:linear-gradient(135deg,rgba(50,70,120,0.95),rgba(30,50,90,0.95));
+        }
+        
+        .exit-btn{
+            background:rgba(150,70,70,0.7);
+            border:1px solid #ff8888;
+            color:#ffcccc;
+            padding:6px 18px;
+            border-radius:25px;
+            cursor:pointer;
+            font-size:0.9em;
+        }
+        
+        .exit-btn:hover{
+            background:#aa4444;
+            color:white;
+        }
+        
+        .question{
+            font-size:1.35em;
+            margin:20px 0;
+            font-weight:500;
+            color:white;
+            line-height:1.4;
+        }
+        
+        .option{
+            background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.2);
+            border-radius:14px;
+            padding:12px 16px;
+            margin:8px 0;
+            cursor:pointer;
+            transition:0.2s;
+            color:white;
+        }
+        
+        .option:hover{
+            background:rgba(255,255,255,0.2);
+            transform:translateX(5px);
+        }
+        
+        .option.selected{
+            background:linear-gradient(90deg,#2e7d32,#1b5e20);
+            border-color:#66bb6a;
+        }
+        
+        .next-btn{
+            background:linear-gradient(90deg,#ff9800,#f57c00);
+            border:none;
+            color:white;
+            padding:10px 28px;
+            font-weight:bold;
+            border-radius:40px;
+            cursor:pointer;
+            margin-top:15px;
+            font-size:1em;
+        }
+        
+        .next-btn:hover{
+            transform:scale(1.02);
+        }
+        
+        .score{
+            font-size:2em;
+            margin:15px 0;
+            color:#FFD966;
+            font-family:'Orbitron',monospace;
+        }
+        
+        .actions{
+            display:flex;
+            justify-content:center;
+            gap:15px;
+            margin:20px 0 10px;
+        }
+        
+        .progress{
+            text-align:right;
+            margin-bottom:15px;
+            color:#aaa;
+            font-size:0.85em;
+        }
+        
+        .results-list{
+            max-height:420px;
+            overflow-y:auto;
+            margin:15px 0;
+            text-align:left;
+        }
+        
+        .result-item{
+            background:rgba(0,0,0,0.5);
+            border-radius:12px;
+            padding:12px;
+            margin:10px 0;
+        }
+        
+        .result-correct{
+            border-left:4px solid #4caf50;
+        }
+        
+        .result-wrong{
+            border-left:4px solid #f44336;
+        }
+        
+        .result-question{
+            font-weight:bold;
+            margin-bottom:6px;
+            color:white;
+        }
+        
+        .result-answer{
+            font-size:0.85em;
+            color:#bbb;
+        }
+        
+        .correct-answer{
+            color:#FFD966;
+            margin-top:5px;
+            font-size:0.85em;
+        }
+        
+        .top-bar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:15px;
+        }
+        
+        ::-webkit-scrollbar{
+            width:6px;
+        }
+        ::-webkit-scrollbar-track{
+            background:rgba(255,255,255,0.1);
+            border-radius:10px;
+        }
+        ::-webkit-scrollbar-thumb{
+            background:#ff9800;
+            border-radius:10px;
+        }
+        
+        @media (max-width:600px){
+            .container{padding:18px;}
+            h1{font-size:1.5em;}
+            .question{font-size:1.1em;}
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app"></div>
+
+<script>
+const categories = [
+    {
+        name: "Солнечная система",
+        icon: "fa-sun",
+        questions: [
+            {question: "Какая планета ближе всего к Солнцу?", options: ["Венера", "Меркурий", "Земля", "Марс"], correct: 1},
+            {question: "Сколько планет в Солнечной системе?", options: ["7", "8", "9", "10"], correct: 1},
+            {question: "Какая планета самая большая?", options: ["Сатурн", "Юпитер", "Нептун", "Уран"], correct: 1},
+            {question: "У какой планеты самые известные кольца?", options: ["Юпитер", "Уран", "Сатурн", "Нептун"], correct: 2},
+            {question: "Какая планета вращается 'лёжа на боку'?", options: ["Уран", "Юпитер", "Сатурн", "Нептун"], correct: 0},
+            {question: "Какой газ преобладает в атмосфере Юпитера?", options: ["Кислород", "Водород", "Углекислый газ", "Азот"], correct: 1},
+            {question: "Где находится пояс астероидов?", options: ["Между Юпитером и Сатурном", "Между Землёй и Марсом", "Между Марсом и Юпитером", "За Нептуном"], correct: 2},
+            {question: "Что такое Большое красное пятно на Юпитере?", options: ["Вулкан", "Гора", "Ураган", "Кратер"], correct: 2}
+        ]
+    },
+    {
+        name: "Достижения человечества",
+        icon: "fa-flag-checkered",
+        questions: [
+            {question: "Кто был первым человеком в космосе?", options: ["Нил Армстронг", "Алексей Леонов", "Юрий Гагарин", "Герман Титов"], correct: 2},
+            {question: "В каком году Гагарин полетел в космос?", options: ["1957", "1961", "1965", "1960"], correct: 1},
+            {question: "Кто первым вышел в открытый космос?", options: ["Гагарин", "Армстронг", "Титов", "Леонов"], correct: 3},
+            {question: "Кто первым ступил на Луну?", options: ["Базз Олдрин", "Нил Армстронг", "Майкл Коллинз", "Юрий Гагарин"], correct: 1},
+            {question: "Как назывался корабль, доставивший первых людей на Луну?", options: ["Союз", "Восток-1", "Аполлон-11", "Спутник-1"], correct: 2},
+            {question: "Какая страна первой запустила спутник Земли?", options: ["США", "СССР", "Китай", "Германия"], correct: 1},
+            {question: "Как называлась первая орбитальная станция?", options: ["Мир", "МКС", "Салют-1", "Скайлэб"], correct: 2},
+            {question: "Какой аппарат первым достиг межзвёздного пространства?", options: ["Пионер-10", "Вояджер-1", "Кассини", "Новые Горизонты"], correct: 1}
+        ]
+    },
+    {
+        name: "Развитие технологий",
+        icon: "fa-microchip",
+        questions: [
+            {question: "Что используют ракеты для движения в космосе?", options: ["Винты", "Реактивная тяга", "Паруса", "Электромоторы"], correct: 1},
+            {question: "Как называется многоразовый корабль NASA?", options: ["Союз", "Аполлон", "Шаттл", "Дракон"], correct: 2},
+            {question: "Что такое МКС?", options: ["Международная космическая станция", "Марсианский комплекс", "Межпланетная станция", "Метеорологическая станция"], correct: 0},
+            {question: "Кто создал ракету для полёта Гагарина?", options: ["Циолковский", "Королёв", "Браун", "Туполев"], correct: 1},
+            {question: "Какую ракету использует SpaceX?", options: ["Союз", "Ариан", "Falcon 9", "Энергия"], correct: 2},
+            {question: "Какое топливо используют современные ракеты?", options: ["Бензин", "Дизель", "Керосин + жидкий кислород", "Водород твёрдый"], correct: 2},
+            {question: "Зачем кораблю теплозащитный экран?", options: ["От перегрева при входе в атмосферу", "От радиации", "От холода", "От микрометеоритов"], correct: 0},
+            {question: "Какой двигатель быстрее доставит на Марс?", options: ["Ионный", "Жидкостный", "Ядерный тепловой", "Твердотопливный"], correct: 2}
+        ]
+    },
+    {
+        name: "Звёзды",
+        icon: "fa-star",
+        questions: [
+            {question: "Ближайшая к Земле звезда?", options: ["Сириус", "Солнце", "Проксима Центавра", "Альфа Центавра"], correct: 1},
+            {question: "Что такое звезда?", options: ["Планета", "Астероид", "Гигантский шар газа", "Комета"], correct: 2},
+            {question: "Самая яркая звезда ночного неба?", options: ["Полярная", "Вега", "Сириус", "Альдебаран"], correct: 2},
+            {question: "Какой цвет у самых горячих звёзд?", options: ["Красный", "Голубой", "Жёлтый", "Оранжевый"], correct: 1},
+            {question: "Во что превращается очень массивная звезда после взрыва?", options: ["Белый карлик", "Красный гигант", "Чёрная дыра", "Планетарная туманность"], correct: 2},
+            {question: "Что такое сверхновая?", options: ["Новая планета", "Взрыв звезды", "Рождение звезды", "Столкновение звёзд"], correct: 1},
+            {question: "Полярная звезда находится...", options: ["На юге", "На востоке", "На севере", "На западе"], correct: 2},
+            {question: "Какой элемент образуется в центре звезды типа Солнца?", options: ["Кислород", "Гелий", "Углерод", "Железо"], correct: 1}
+        ]
+    }
+];
+
+let curCat=null, qIndex=0, answers=[], active=false;
+let showGoal=true;
+const div=document.getElementById('app');
+
+function showStart(){
+    div.innerHTML=`
+        <h1><i class="fas fa-rocket"></i> Орбита знаний</h1>
+        <div class="subtitle">интерактивная викторина</div>
+        <div class="goal-block">
+            <div class="goal-text">
+                <strong>Цель проекта</strong><br>
+                Формирование и углубление знаний школьников 9–11 классов о космонавтике, 
+                астрономии и космических технологиях через интерактивное тестирование.
+            </div>
+        </div>
+        <button class="play-btn" id="startBtn"><i class="fas fa-play"></i> Начать</button>
+    `;
+    document.getElementById('startBtn').onclick=()=>{showGoal=false; menu();};
+}
+
+function menu(){
+    let html=`<h1><i class="fas fa-rocket"></i> Орбита знаний</h1><div class="subtitle">выберите раздел</div><div class="categories">`;
+    for(let i=0;i<categories.length;i++){
+        const c=categories[i];
+        html+=`<div class="cat-btn" data-i="${i}"><i class="fas ${c.icon}"></i>${c.name}<br><span style="font-size:11px;">${c.questions.length} вопросов</span></div>`;
+    }
+    html+=`</div>`;
+    div.innerHTML=html;
+    const btns=document.querySelectorAll('.cat-btn');
+    for(let i=0;i<btns.length;i++){
+        btns[i].onclick=function(){
+            start(parseInt(this.dataset.i));
+        };
+    }
+}
+
+function start(i){
+    curCat=categories[i];
+    qIndex=0;
+    answers=[];
+    for(let i=0;i<curCat.questions.length;i++) answers[i]=-1;
+    active=true;
+    renderQ();
+}
+
+function renderQ(){
+    if(!active || qIndex>=curCat.questions.length){
+        results();
+        return;
+    }
+    const q=curCat.questions[qIndex];
+    let opts='';
+    for(let idx=0;idx<q.options.length;idx++){
+        const opt=q.options[idx];
+        const isSel=(answers[qIndex]===idx);
+        opts+=`<div class="option ${isSel?'selected':''}" data-opt="${idx}">${String.fromCharCode(65+idx)}. ${opt}</div>`;
+    }
+    div.innerHTML=`
+        <div class="top-bar">
+            <button class="exit-btn" id="exitBtn"><i class="fas fa-arrow-left"></i> В меню</button>
+            <div class="progress"><i class="fas fa-question-circle"></i> ${qIndex+1} / ${curCat.questions.length}</div>
+        </div>
+        <div class="question">${q.question}</div>
+        <div id="opts">${opts}</div>
+        <button class="next-btn" id="nextBtn"><i class="fas ${qIndex===curCat.questions.length-1?'fa-check':'fa-arrow-right'}"></i> ${qIndex===curCat.questions.length-1?'Завершить':'Далее'}</button>
+    `;
+    const optsDivs=document.querySelectorAll('.option');
+    for(let i=0;i<optsDivs.length;i++){
+        optsDivs[i].onclick=function(){
+            answers[qIndex]=parseInt(this.dataset.opt);
+            renderQ();
+        };
+    }
+    document.getElementById('nextBtn').onclick=function(){
+        if(answers[qIndex]===-1){
+            alert('Выберите ответ');
+            return;
+        }
+        if(qIndex+1<curCat.questions.length){
+            qIndex++;
+            renderQ();
+        }else{
+            results();
+        }
+    };
+    document.getElementById('exitBtn').onclick=function(){
+        active=false;
+        menu();
+    };
+}
+
+function results(){
+    let correct=0;
+    let items='';
+    for(let i=0;i<curCat.questions.length;i++){
+        const q=curCat.questions[i];
+        const ok=(answers[i]===q.correct);
+        if(ok) correct++;
+        const userAns=answers[i]!==-1?q.options[answers[i]]:'Не выбран';
+        const rightAns=q.options[q.correct];
+        items+=`
+            <div class="result-item ${ok?'result-correct':'result-wrong'}">
+                <div class="result-question">${i+1}. ${q.question}</div>
+                <div class="result-answer">Ваш ответ: ${userAns}</div>
+                ${!ok?`<div class="correct-answer">Правильный ответ: ${rightAns}</div>`:'<div class="result-answer">Верно</div>'}
+            </div>
+        `;
+    }
+    div.innerHTML=`
+        <div class="top-bar">
+            <button class="exit-btn" id="exitBtn"><i class="fas fa-home"></i> В меню</button>
+            <div class="progress">результат</div>
+        </div>
+        <div style="text-align:center">
+            <h2>Результаты</h2>
+            <div class="score">${correct} / ${curCat.questions.length}</div>
+            <div class="results-list">${items}</div>
+            <div class="actions">
+                <button class="next-btn" id="againBtn"><i class="fas fa-sync"></i> Пройти заново</button>
+            </div>
+        </div>
+    `;
+    document.getElementById('againBtn').onclick=function(){
+        start(categories.indexOf(curCat));
+    };
+    document.getElementById('exitBtn').onclick=function(){
+        active=false;
+        menu();
+    };
+}
+
+showStart();
+</script>
+</body>
+</html>
